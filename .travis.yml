@@ -1,10 +1,26 @@
 language: rust
+
+cache: cargo
 rust:
   - stable
   - beta
   - nightly
+
 matrix:
   allow_failures:
     - rust: nightly
   fast_finish: true
 
+install:
+  - rustup component add rust-src
+  - rustup target add thumbv7m-none-eabi
+
+# TODO: Remove check as soon as Rust 2018 Edition is stable
+script:
+  - cargo build
+  - cargo test
+  - |
+    if [[ "$TRAVIS_RUST_VERSION" != "stable" ]]; then
+    cd no-std-example
+    cargo build
+    fi
